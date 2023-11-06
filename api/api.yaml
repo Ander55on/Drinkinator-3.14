@@ -1,0 +1,580 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: Drinkinator PI API
+  description: Configuration API for the Drinkinator PI
+
+paths:
+  /drinks:
+    get:
+      tags:
+        - Drinks
+      description: Returns a list of the configured drinks
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetDrink'
+    post:
+      tags:
+        - Drinks
+      description: Creates a new drink
+      requestBody:
+        description: Drink to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostDrink'
+      responses:
+        201:
+          description: Drink created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDrink'
+
+  /drinks/{drinkId}:
+    get:
+      tags:
+        - Drinks
+      description: Returns a drink by id
+      parameters:
+        - name: drinkId
+          in: path
+          description: ID of the drink to return
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Drink'
+        404:
+          description: Drink not found
+    patch:
+      tags:
+        - Drinks
+      description: Updates a drink by id
+      parameters:
+        - name: drinkId
+          in: path
+          description: ID of the drink to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Drink to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDrink'
+      responses:
+        200:
+          description: Drink updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchDrinkGet'
+        404:
+          description: Drink not found
+    put:
+      tags:
+        - Drinks
+      description: Replaces a drink by id
+      parameters:
+        - name: drinkId
+          in: path
+          description: ID of the drink to replace
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Drink to be replaced
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostDrink'
+      responses:
+        200:
+          description: Drink replaced successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetDrink'
+        404:
+          description: Drink not found
+    delete:
+      tags:
+        - Drinks
+      description: Deletes a drink by id
+      parameters:
+        - name: drinkId
+          in: path
+          description: ID of the drink to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Drink deleted successfully
+        404:
+          description: Drink not found
+
+  /ingredients:
+    get:
+      tags:
+        - Ingredients
+      description: Returns a list of the configured ingredients
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ingredient'
+    post:
+      tags:
+        - Ingredients
+      description: Creates a new ingredient
+      requestBody:
+        description: Ingredient to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ingredient'
+      responses:
+        201:
+          description: Ingredient created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ingredient'
+  /ingredients/{ingredientId}:
+    get:
+      tags:
+        - Ingredients
+      description: Returns an ingredient by id
+      parameters:
+        - name: ingredientId
+          in: path
+          description: ID of the ingredient to return
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ingredient'
+        404:
+          description: Ingredient not found
+    patch:
+      tags:
+        - Ingredients
+      description: Updates an ingredient by id
+      parameters:
+        - name: ingredientId
+          in: path
+          description: ID of the ingredient to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Ingredient to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ingredient'
+      responses:
+        200:
+          description: Ingredient updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ingredient'
+        404:
+          description: Ingredient not found
+    put:
+      tags:
+        - Ingredients
+      description: Replaces an ingredient by id
+      parameters:
+        - name: ingredientId
+          in: path
+          description: ID of the ingredient to replace
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Ingredient to be replaced
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ingredient'
+      responses:
+        200:
+          description: Ingredient replaced successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ingredient'
+        404:
+          description: Ingredient not found
+    delete:
+      tags:
+        - Ingredients
+      description: Deletes an ingredient by id
+      parameters:
+        - name: ingredientId
+          in: path
+          description: ID of the ingredient to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Ingredient deleted successfully
+        404:
+          description: Ingredient not found
+
+  /pumps:
+    get:
+      tags:
+        - Pumps
+      description: Returns a list of the configured pumps
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PumpConfiguration'
+    post:
+      tags:
+        - Pumps
+      description: Creates a new pump
+      requestBody:
+        description: Pump to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostPump'
+      responses:
+        201:
+          description: Pump created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PumpConfiguration'
+
+  /pumps/{pumpId}:
+    get:
+      tags:
+        - Pumps
+      description: Returns a pump by id
+      parameters:
+        - name: pumpId
+          in: path
+          description: ID of the pump to return
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PumpConfiguration'
+        404:
+          description: Pump not found
+    patch:  
+      tags:
+        - Pumps
+      description: Updates a pump by id
+      parameters:
+        - name: pumpId
+          in: path
+          description: ID of the pump to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Pump to be updated
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchPump'
+      responses:
+        200:
+          description: Pump updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PatchPumpGet'
+        404:
+          description: Pump not found
+
+    put:  
+      tags:
+        - Pumps
+      description: Replaces a pump by id
+      parameters:
+        - name: pumpId
+          in: path
+          description: ID of the pump to replace
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Pump to be replaced
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostPump'
+      responses:
+        200:
+          description: Pump replaced successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PumpConfiguration'
+        404:
+          description: Pump not found
+
+    delete: 
+      tags:
+        - Pumps
+      description: Deletes a pump by id
+      parameters:
+        - name: pumpId
+          in: path
+          description: ID of the pump to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Pump deleted successfully
+        404:
+          description: Pump not found
+
+######### SCHEMAS #########
+components:
+  schemas:
+    Drink:
+      description: A drink
+      type: object
+      properties:
+        id: 
+          description: ID of the drink
+          type: string
+          format: uuid
+          readOnly: true
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        name:
+          description: Name of the drink
+          type: string
+          example: "Gin and Tonic"
+        Instructions:
+          description: List of ingredients
+          type: array
+          items:
+            $ref: '#/components/schemas/Instruction'
+
+    GetDrink:
+      allOf:
+        - $ref: '#/components/schemas/Drink'
+      example:
+        id: "123e4567-e89b-12d3-a456-426614174000"
+        name: "Gin and Tonic"
+        Instructions:
+          - ingredient:
+              id: "123e4567-e89b-12d3-a456-426614174000"
+              name: "Gin"
+            measurement:
+              quantity: 4
+              unit: cl
+          - ingredient:
+              id: "123e4567-e89b-12d3-a456-426614174000"
+              name: "Tonic"
+            measurement:
+              quantity: 12
+              unit: cl
+    
+    PatchDrinkGet:
+      allOf: 
+        - $ref: '#/components/schemas/GetDrink'
+      example:
+        id: "123e4567-e89b-12d3-a456-426614174000"
+        name: "Updated Gin and Tonic"
+        Instructions:
+          - ingredient:
+              id: "123e4567-e89b-12d3-a456-426614174000"
+              name: "Gin"
+            measurement:
+              quantity: 10
+              unit: cl
+          - ingredient:
+              id: "123e4567-e89b-12d3-a456-426614174000"
+              name: "Tonic"
+            measurement:
+              quantity: 12
+              unit: cl
+
+    PatchDrink:
+      allOf: 
+        - $ref: '#/components/schemas/Drink'
+      example:
+        name: "Updated Gin and Tonic"
+        Instructions:
+          - ingredient:
+              name: "Gin"
+            measurement:
+              quantity: 10
+              unit: cl
+
+    PostDrink:
+      allOf:
+        - $ref: '#/components/schemas/Drink'
+        - type: object
+          required:
+            - name
+            - Instructions
+      example:
+        name: "Gin and Tonic"
+        Instructions:
+          - ingredient:
+              name: "Gin"
+            measurement:
+              quantity: 4
+              unit: cl
+          - ingredient:
+              name: "Tonic"
+            measurement:
+              quantity: 12
+              unit: cl
+        
+    Instruction:
+      type: object
+      properties:
+        ingredient:
+          type: object
+          $ref: '#/components/schemas/Ingredient'
+        measurement:
+          type: object
+          $ref: '#/components/schemas/Measurement'
+    
+    Measurement:
+      type: object
+      properties:
+        quantity: 
+          description: Quantity to pour
+          type: integer
+          example: 4
+        unit: 
+          description: Unit of the ingredient
+          type: string
+          enum: [ml, cl]
+          example: "cl"
+
+    Ingredient:
+      type: object
+      properties:
+        id: 
+          description: ID of the ingredient
+          type: string
+          format: uuid
+          readOnly: true
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        name:
+          description: Name of the ingredient
+          type: string
+          example: "Gin"
+
+    PostPump:
+      allOf:
+        - $ref: '#/components/schemas/PumpConfiguration'
+        - type: object
+        - required:
+          - hardwareConfig
+          - ingredient
+          - position
+      example:
+        position: 1
+        hardwareConfig:
+          gpio: 17
+        ingredient:
+          id: "123e4567-e89b-12d3-a456-426614174000"
+
+    PatchPump:
+      allOf:
+        - $ref: '#/components/schemas/PumpConfiguration'
+        - type: object
+      example:
+        hardwareConfig:
+          gpio: 22
+
+    PatchPumpGet:
+      allOf:
+        - $ref: '#/components/schemas/PumpConfiguration'
+      example:
+        id: "123e4567-e89b-12d3-a456-426614174000"
+        position: 1
+        hardwareConfig:
+          gpio: 22
+        ingredient:
+          id: "123e4567-e89b-12d3-a456-426614174000"
+    
+    PumpConfiguration:
+      type: object
+      properties:
+        id: 
+          description: ID of the pump
+          type: string
+          format: uuid
+          readOnly: true
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        position:
+          description: Physical position of the pump
+          type: integer
+          nullable: true
+          example: 1
+        hardwareConfig:
+          description: Hardware configuration of the pump
+          type: object
+          required:
+            - gpio
+          properties:
+            gpio:
+              description: GPIO pin of the pump
+              type: integer
+              example: 17
+        ingredient:
+          description: ID of the ingredient configured for the pump
+          type: string
+          format: uuid
+          nullable: true
+          example: "123e4567-e89b-12d3-a456-426614174000"
