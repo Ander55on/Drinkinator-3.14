@@ -1,17 +1,21 @@
 use hyper::service::{make_service_fn, service_fn};
-use hyper::{Body, Method, Request, Response, Server};
+use hyper::{Body, Request, Response, Server};
 use std::convert::Infallible;
 use std::net::SocketAddr;
-use std::sync::Arc;
 
 mod routes;
-use routes::route::{Route, Router};
+mod models;
+use routes::route::route;
 
-async fn handle_request(
-    req: Request<Body>,
-    router: Arc<Router>,
-) -> Result<Response<Body>, Infallible> {
-    let test = router.as_ref().route(req);
+async fn handle_request(req: Request<Body>) -> Result<Response<Body>, Infallible> {
+
+    let path = String::from(req.uri().path());
+    let method = req.method().clone();
+    let body = req.into_body();
+
+    let body_bytes = hyper::body::to_bytes(body).await.unwrap();
+
+    let test = route(path, method, body_bytes);
     match test {
         Ok(response) => Ok(response),
         Err(_e) => {
@@ -28,20 +32,8 @@ async fn handle_request(
 async fn main() {
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
 
-    let mut router = Router::new();
-    let route = Route::new("/drinks".to_string(), Method::GET);
-
-    router.add_route(route, routes::drinks::get_drinks);
-
-    let router = Arc::new(router);
-
-    let make_svc = make_service_fn(move |_conn: &hyper::server::conn::AddrStream| {
-        let router = Arc::clone(&router);
-        async move {
-            Ok::<_, Infallible>(service_fn(move |req| {
-                handle_request(req, Arc::clone(&router))
-            }))
-        }
+    let make_svc = make_service_fn(|_conn: &hyper::server::conn::AddrStream| async {
+        Ok::<_, Infallible>(service_fn(move |req| handle_request(req)))
     });
 
     let server = Server::bind(&addr).serve(make_svc);

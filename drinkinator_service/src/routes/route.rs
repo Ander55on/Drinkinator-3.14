@@ -1,48 +1,19 @@
-use core::hash::Hash;
-use hyper::{Body, Method, Request, Response, StatusCode};
-use std::collections::HashMap;
+use hyper::body::Bytes;
+use hyper::{Body, Method, Response, StatusCode};
 use std::convert::Infallible;
-type Handler = fn(Request<Body>) -> Result<Response<Body>, Infallible>;
 
-#[derive(PartialEq, Eq, Hash, Debug)]
-pub struct Route {
-    path: String,
-    method: Method,
-}
+use super::drinks::{get_drinks, post_drink};
 
-pub struct Router {
-    routes: HashMap<Route, Handler>,
-}
-
-impl Router {
-    pub fn new() -> Self {
-        Self {
-            routes: HashMap::new(),
-        }
-    }
-
-    pub fn add_route(&mut self, route: Route, handler: Handler) {
-        self.routes.insert(route, handler);
-    }
-
-    pub fn route(&self, req: Request<Body>) -> Result<Response<Body>, Infallible> {
-        let route = Route::new(req.uri().path().to_string(), req.method().clone());
-        match self.routes.get(&route) {
-            Some(handler) => handler(req),
-            None => {
-                let response = Response::builder()
+pub fn route(path: String, method: Method, body: Bytes) -> Result<Response<Body>, Infallible> {
+    match (path.as_str(), method) {
+        ("/drinks", Method::GET) => get_drinks(body),
+        ("/drinks", Method::POST) => post_drink(body),
+        _ => {
+            let response = Response::builder()
                 .status(StatusCode::NOT_FOUND)
-                .body(Body::from("Not Found"))
+                .body(Body::from("404 Not Found"))
                 .unwrap();
-
-                Ok(response)
-            }
+            Ok(response)
         }
-    }
-}
-
-impl Route {
-    pub fn new(path: String, method: Method) -> Self {
-        Self { path, method }
     }
 }
