@@ -1,29 +1,37 @@
 use serde::Deserialize;
+use serde::Serialize;
 
-#[derive(Deserialize)]
-struct GetDrink {
+#[derive(Debug, Deserialize, Serialize)]
+pub struct GetDrink {
     id: String,
     name: String,
+    instructions: Vec<Instruction>
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
+pub struct PostDrink {
+    name: String,
+    instructions: Vec<Instruction>
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 struct GetIngredient {
     id: String,
     name: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 struct Ingredient {
     name: String,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize,Serialize)]
 struct Instruction {
     ingredient: Ingredient,
     measurement: Measurement,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 enum Unit {
     #[serde(rename = "cl")]
     Cl,
@@ -31,7 +39,7 @@ enum Unit {
     Ml
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 struct Measurement {
     quantity: u32,
     unit: Unit

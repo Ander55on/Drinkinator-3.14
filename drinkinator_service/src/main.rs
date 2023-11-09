@@ -1,31 +1,34 @@
 use hyper::service::{make_service_fn, service_fn};
 use hyper::{Body, Request, Response, Server};
+use responses::responses::response_error_server_error;
 use std::convert::Infallible;
 use std::net::SocketAddr;
 
-mod routes;
 mod models;
+mod responses;
+mod routes;
 use routes::route::route;
 
 async fn handle_request(req: Request<Body>) -> Result<Response<Body>, Infallible> {
-
     let path = String::from(req.uri().path());
     let method = req.method().clone();
     let body = req.into_body();
 
-    let body_bytes = hyper::body::to_bytes(body).await.unwrap();
-
-    let test = route(path, method, body_bytes);
-    match test {
-        Ok(response) => Ok(response),
-        Err(_e) => {
-            let response = Response::builder()
-                .status(500)
-                .body(Body::from("Internal Server Error"))
-                .unwrap();
-            Ok(response)
+    let body_bytes = match hyper::body::to_bytes(body).await {
+        Ok(bytes) => bytes,
+        Err(e) => {
+            eprintln!("Error: {e}");
+            return Ok(response_error_server_error())
         }
-    }
+    };
+
+    let response = route(path, method, body_bytes)
+    .unwrap_or_else(|e| {
+        eprintln!("Error: {e}");
+        response_error_server_error()
+    });
+
+    Ok(response)
 }
 
 #[tokio::main]
