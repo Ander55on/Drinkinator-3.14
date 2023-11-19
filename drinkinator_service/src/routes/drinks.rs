@@ -6,6 +6,9 @@ use std::convert::Infallible;
 use std::error::Error;
 
 pub fn get_drinks(_bytes: Bytes) -> Result<Response<Body>, Infallible> {
+    
+
+
     Ok(Response::new("Getting drinks".into()))
 }
 

@@ -398,7 +398,7 @@ components:
           description: Name of the drink
           type: string
           example: "Gin and Tonic"
-        Instructions:
+        instructions:
           description: List of ingredients
           type: array
           items:
@@ -410,7 +410,7 @@ components:
       example:
         id: "123e4567-e89b-12d3-a456-426614174000"
         name: "Gin and Tonic"
-        Instructions:
+        instructions:
           - ingredient:
               id: "123e4567-e89b-12d3-a456-426614174000"
               name: "Gin"
@@ -430,7 +430,7 @@ components:
       example:
         id: "123e4567-e89b-12d3-a456-426614174000"
         name: "Updated Gin and Tonic"
-        Instructions:
+        instructions:
           - ingredient:
               id: "123e4567-e89b-12d3-a456-426614174000"
               name: "Gin"
@@ -449,7 +449,7 @@ components:
         - $ref: '#/components/schemas/Drink'
       example:
         name: "Updated Gin and Tonic"
-        Instructions:
+        instructions:
           - ingredient:
               name: "Gin"
             measurement:
@@ -462,10 +462,10 @@ components:
         - type: object
           required:
             - name
-            - Instructions
+            - instructions
       example:
         name: "Gin and Tonic"
-        Instructions:
+        instructions:
           - ingredient:
               name: "Gin"
             measurement:
