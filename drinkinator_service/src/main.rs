@@ -2,7 +2,6 @@ use hyper::service::{make_service_fn, service_fn};
 use hyper::{Body, Request, Response, Server};
 use responses::responses::response_error_server_error;
 use sqlx::migrate::MigrateDatabase;
-use sqlx::sqlite::SqlitePoolOptions;
 use sqlx::{Pool, Sqlite, SqlitePool};
 use std::convert::Infallible;
 use std::net::SocketAddr;
@@ -29,10 +28,12 @@ async fn handle_request(
         }
     };
 
-    let response = route(path, method, body_bytes).unwrap_or_else(|e| {
-        eprintln!("Error: {e}");
-        response_error_server_error()
-    });
+    let response = route(path, method, body_bytes, pool)
+        .await
+        .unwrap_or_else(|e| {
+            eprintln!("Error: {e}");
+            response_error_server_error()
+        });
 
     Ok(response)
 }
@@ -50,11 +51,13 @@ async fn create_database_schema(pool: &Pool<Sqlite>) -> Result<(), sqlx::Error> 
     sqlx::query(
         "CREATE TABLE IF NOT EXISTS ingredients (
         name TEXT PRIMARY KEY
-    )"
+    )",
     )
     .execute(pool)
     .await?;
-    sqlx::query("CREATE TABLE IF NOT EXISTS ingredient_instruction (
+
+    sqlx::query(
+        "CREATE TABLE IF NOT EXISTS ingredient_instruction (
         ingredient_name TEXT NOT NULL,
         drink_id INTEGER NOT NULL,
         unit TEXT NOT NULL,
@@ -62,10 +65,12 @@ async fn create_database_schema(pool: &Pool<Sqlite>) -> Result<(), sqlx::Error> 
         FOREIGN KEY(ingredient_name) REFERENCES ingredients(name),
         FOREIGN KEY(drink_id) REFERENCES drinks(id),
         PRIMARY KEY(ingredient_name, drink_id)
-    )").execute(pool).await?;
+    )",
+    )
+    .execute(pool)
+    .await?;
 
     Ok(())
-    
 }
 
 #[tokio::main]
