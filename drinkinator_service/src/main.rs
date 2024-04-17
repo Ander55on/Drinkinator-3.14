@@ -27,14 +27,7 @@ async fn handle_request(
             return Ok(response_error_server_error());
         }
     };
-
-    let response = route(path, method, body_bytes, pool)
-        .await
-        .unwrap_or_else(|e| {
-            eprintln!("Error: {e}");
-            response_error_server_error()
-        });
-
+    let response = route(path, method, body_bytes, pool).await;
     Ok(response)
 }
 

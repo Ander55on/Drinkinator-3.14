@@ -5,23 +5,31 @@ use serde::Deserialize;
 use serde::Serialize;
 
 pub enum ModelOperationError {
-    CreateError(String),
-    DeleteError,
-    UpdateError,
-    ParseError,
+    InternalError,
+    NotFound,
+}
+
+impl From<sqlx::Error> for ModelOperationError {
+    fn from(error: sqlx::Error) -> Self {
+        match error {
+            sqlx::Error::RowNotFound => Self::NotFound,
+            sqlx::Error::ColumnNotFound(_) => Self::NotFound,
+            _ => Self::InternalError,
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct GetDrink {
     id: String,
     name: String,
-    instructions: Vec<Instruction>
+    instructions: Vec<Instruction>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct PostDrink {
     pub name: String,
-    pub instructions: Vec<Instruction>
+    pub instructions: Vec<Instruction>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -35,7 +43,7 @@ pub struct Ingredient {
     pub name: String,
 }
 
-#[derive(Debug, Deserialize,Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Instruction {
     pub ingredient: Ingredient,
     pub measurement: Measurement,
@@ -46,7 +54,7 @@ pub enum Unit {
     #[serde(rename = "cl")]
     Cl,
     #[serde(rename = "ml")]
-    Ml
+    Ml,
 }
 
 impl fmt::Display for Unit {
@@ -65,7 +73,7 @@ impl FromStr for Unit {
         match s {
             "cl" => Ok(Unit::Cl),
             "ml" => Ok(Unit::Ml),
-            _ => Err(())
+            _ => Err(()),
         }
     }
 }
@@ -73,6 +81,5 @@ impl FromStr for Unit {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Measurement {
     pub quantity: u32,
-    pub unit: Unit
-} 
-
+    pub unit: Unit,
+}
